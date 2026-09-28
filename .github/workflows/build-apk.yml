@@ -23,12 +23,13 @@ jobs:
           "$SDKMANAGER" "platform-tools" "platforms;android-34" "build-tools;34.0.0" "ndk;27.0.12077973"
 
       - name: Install Gradle 9.4.1
-        uses: gradle/actions/setup-gradle@v4
-        with:
-          gradle-version: '9.4.1'
+        run: |
+          curl -L --retry 3 -o /tmp/gradle.zip https://services.gradle.org/distributions/gradle-9.4.1-bin.zip
+          unzip -q /tmp/gradle.zip -d /tmp
+          echo "/tmp/gradle-9.4.1/bin" >> "$GITHUB_PATH"
 
       - name: Build debug APK
-        run: gradle :app:assembleDebug --stacktrace
+        run: /tmp/gradle-9.4.1/bin/gradle :app:assembleDebug --stacktrace --no-daemon
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
